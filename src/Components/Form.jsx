@@ -25,7 +25,7 @@ const Form = ({ formData, setFormData }) => {
     }
     setFormData([...formData, input]);
     setInput({ guestNumber: '', guestName: '', dateTime: '', adults: '', children: '', slipNumber: '' });
-    alert("Data saved successfully! ✅");
+    
   }
 
   return (

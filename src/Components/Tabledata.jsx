@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Trash, Pencil } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
-const Tabledata = ({ formData }) => {
+const Tabledata = () => {
+  const [formData, setFormData] = useState([]);
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
-  // Filter data across all fields
-  const filteredData = formData.filter(item => 
-    Object.values(item).some(
-      value => value.toString().toLowerCase().includes(search.toLowerCase())
+  // Load data from localStorage on mount
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('eventData')) || [];
+    setFormData(storedData);
+  }, []);
+
+  // Delete a row and update localStorage immediately
+  const deleteData = (index) => {
+    const updatedData = [...formData];
+    updatedData.splice(index, 1);
+    setFormData(updatedData);
+    localStorage.setItem('eventData', JSON.stringify(updatedData)); // update storage
+    window.location.reload();
+  };
+
+  // Filter based on search
+  const filteredData = formData.filter(item =>
+    Object.values(item).some(value =>
+      value.toString().toLowerCase().includes(search.toLowerCase())
     )
   );
 
   return (
     <div className="table-container">
-      <h2 style={{ color: '#ecf0f1', textAlign: 'center', marginBottom: '20px' }}>
-        Saved Event Data
-      </h2>
-
-      {/* Search Box */}
+      <h2>Saved Event Data</h2>
       <div className="search-box">
         <input
           type="text"
@@ -26,32 +41,40 @@ const Tabledata = ({ formData }) => {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
       {filteredData.length === 0 ? (
-        <p style={{ color: '#ecf0f1', textAlign: 'center' }}>No data available.</p>
+        <p>No data available.</p>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>#</th> {/* Roll / Serial Number */}
+              <th>#</th>
               <th>Date & Time</th>
               <th>Guest Name</th>
               <th>Adults</th>
               <th>Children</th>
               <th>Slip Number</th>
               <th>Contact</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredData.map((item, index) => (
               <tr key={index}>
-                <td data-label="#"> {index + 1} </td> {/* Serial Number */}
-                <td data-label="Date & Time">{item.dateTime}</td>
-                <td data-label="Guest Name">{item.guestName}</td>
-                <td data-label="Adults">{item.adults}</td>
-                <td data-label="Children">{item.children}</td>
-                <td data-label="Slip Number">{item.slipNumber}</td>
-                <td data-label="Contact">{item.guestNumber}</td>
+                <td>{index + 1}</td>
+                <td>{item.dateTime}</td>
+                <td>{item.guestName}</td>
+                <td>{item.adults}</td>
+                <td>{item.children}</td>
+                <td>{item.slipNumber}</td>
+                <td>{item.guestNumber}</td>
+                <td>
+                  <button onClick={() => navigate(`/edit/${index}`)}>
+                    <Pencil />
+                  </button>
+                  <button onClick={() => deleteData(index)}>
+                    <Trash />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

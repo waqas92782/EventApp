@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Form  from './Components/Form';
 import Tabledata from './Components/Tabledata';
 import './App.css'; // styling ek hi file me
+import Edit from './Components/Edit';
 
 const App = () => {
   const [formData, setFormData] = useState(() => {
@@ -23,6 +24,7 @@ const App = () => {
       <Routes>
         <Route path="/form" element={<Form formData={formData} setFormData={setFormData} />} />
         <Route path="/tabledata" element={<Tabledata formData={formData} />} />
+        <Route path="/edit/:index" element={<Edit formData={formData} setFormData={setFormData} />} />
       </Routes>
     </BrowserRouter>
   )
